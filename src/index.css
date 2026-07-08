@@ -1,0 +1,256 @@
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #0a0a0f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ── Wrapper ── */
+.game-wrapper {
+  position: relative;
+  width: 800px;
+  height: 600px;
+  box-shadow: 0 0 40px rgba(80, 40, 200, 0.5), 0 0 80px rgba(80, 40, 200, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+#game-container canvas {
+  display: block;
+}
+
+/* ── HUD overlay ── */
+.hud {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bar-row span {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  width: 22px;
+  text-shadow: 0 0 6px rgba(0,0,0,0.9);
+}
+
+.bar-bg {
+  width: 130px;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.15);
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.15s ease;
+}
+
+.bar-fill.hp {
+  background: linear-gradient(90deg, #cc1111, #ff4444);
+  box-shadow: 0 0 6px #ff2222;
+}
+
+.bar-fill.mp {
+  background: linear-gradient(90deg, #1155cc, #3399ff);
+  box-shadow: 0 0 6px #2266ff;
+}
+
+/* ── Wave / Score ── */
+.wave-info {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.wave-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffdd55;
+  text-shadow: 0 0 8px rgba(0,0,0,0.9);
+}
+
+.score-label {
+  font-size: 12px;
+  color: #ccc;
+  text-shadow: 0 0 6px rgba(0,0,0,0.8);
+}
+
+/* ── Wave Transition Overlay ── */
+.overlay-msg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.45);
+  z-index: 20;
+  animation: fadeInOut 3s ease forwards;
+}
+
+.overlay-msg p {
+  font-size: 26px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(100,200,255,0.8);
+  text-align: center;
+  padding: 20px 40px;
+  background: rgba(20,20,40,0.85);
+  border: 1px solid rgba(100,150,255,0.3);
+  border-radius: 12px;
+}
+
+@keyframes fadeInOut {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ── End Screen ── */
+.end-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: rgba(0,0,0,0.75);
+  z-index: 30;
+  backdrop-filter: blur(4px);
+}
+
+.end-screen h1 {
+  font-size: 42px;
+  font-weight: 900;
+  text-shadow: 0 0 30px currentColor;
+}
+
+.end-screen h1.victory { color: #ffdd00; }
+.end-screen h1.gameover { color: #ff4444; }
+
+.end-screen p {
+  font-size: 20px;
+  color: #ccc;
+}
+
+.end-screen button {
+  margin-top: 10px;
+  padding: 12px 36px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #5533aa, #8855ff);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 0 20px rgba(136,85,255,0.4);
+}
+
+.end-screen button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(136,85,255,0.7);
+}
+
+/* ── Ability Bar ── */
+.ability-bar {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.ability-slot {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  background: rgba(10, 10, 20, 0.85);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.ability-slot:not(.on-cooldown) {
+  box-shadow: 0 0 10px var(--glow, #fff3), 0 0 2px var(--glow, #fff5) inset;
+}
+
+.ability-slot.on-cooldown {
+  opacity: 0.7;
+}
+
+.ability-key {
+  font-size: 11px;
+  font-weight: 900;
+  color: #fff;
+  background: rgba(255,255,255,0.12);
+  padding: 1px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.ability-name {
+  font-size: 9px;
+  color: #ccc;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Overlay escuro que sobe de baixo quando em cooldown */
+.cd-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  transition: height 0.05s linear;
+  pointer-events: none;
+}
+
+/* Barra de cor na base do slot */
+.ability-color-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  border-radius: 0 0 8px 8px;
+}
+
